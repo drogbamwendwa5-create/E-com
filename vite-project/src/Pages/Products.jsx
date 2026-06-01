@@ -28,13 +28,23 @@ export default function Products() {
   const { addToCart } = useCart();
   const { wishlistItems, toggleWishlist } = useWishlist();
 
-  useEffect(() => {
+    useEffect(() => {
     setLoading(true);
-    setCurrentPage(1); // Reset to page 1 when category changes
+    setCurrentPage(1); 
+    
+    // Fetch admin-added products from LocalStorage
+    const customProducts = JSON.parse(localStorage.getItem('custom_products')) || [];
+
     if (activeCategory === 'all') {
-      fetchProducts(100).then(data => { setProducts(data); setLoading(false); });
+      fetchProducts(100).then(data => { 
+        setProducts([...customProducts, ...data]); // Add custom products to the beginning
+        setLoading(false); 
+      });
     } else {
-      fetchProductsByCategory(activeCategory).then(data => { setProducts(data); setLoading(false); });
+      fetchProductsByCategory(activeCategory).then(data => { 
+        setProducts([...customProducts, ...data]); 
+        setLoading(false); 
+      });
     }
     fetchCategories().then(setCategories);
   }, [activeCategory]);
